@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BookMyShow Clone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="font-family: sans-serif; padding: 20px; background-color: #f4f4f4;">
+
+    <div class="container">
+        <h1 class="mb-4" style="color: #333; font-weight: bold;">Available Movies</h1>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <form method="GET" action="{% url 'movie_list' %}" class="row g-3 align-items-end">
+                
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Genre</label>
+                    <select name="genre" class="form-select">
+                        <option value="">All Genres</option>
+                        <option value="Action" {% if request.GET.genre == "Action" %}selected{% endif %}>Action</option>
+                        <option value="Romance" {% if request.GET.genre == "Romance" %}selected{% endif %}>Romance</option>
+                        <option value="Comedy" {% if request.GET.genre == "Comedy" %}selected{% endif %}>Comedy</option>
+                        <option value="Sci-Fi" {% if request.GET.genre == "Sci-Fi" %}selected{% endif %}>Sci-Fi</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Language</label>
+                    <select name="language" class="form-select">
+                        <option value="">All Languages</option>
+                        <option value="English" {% if request.GET.language == "English" %}selected{% endif %}>English</option>
+                        <option value="Hindi" {% if request.GET.language == "Hindi" %}selected{% endif %}>Hindi</option>
+                        <option value="Marathi" {% if request.GET.language == "Marathi" %}selected{% endif %}>Marathi</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-danger flex-grow-1" style="background: #e50914;">Apply Filters</button>
+                    <a href="{% url 'movie_list' %}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="row">
+            {% for movie in movies %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if movie.image %}
+                            <img src="{{ movie.image.url }}" class="card-img-top" alt="{{ movie.name }}" style="height: 300px; object-fit: cover;">
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h3 class="card-title h5">{{ movie.name }}</h3>
+                            <p class="text-muted">{{ movie.genre }} | {{ movie.language }}</p>
+                            
+                            {% if movie.trailer_url %}
+                            <div class="mt-2 mb-3">
+                                <p class="small fw-bold mb-1">Official Trailer:</p>
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="{{ movie.trailer_url }}" title="Trailer" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <a href="{% url 'theater' movie.id %}" class="btn btn-primary w-100">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">No movies found matching your filters.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
